@@ -182,7 +182,7 @@ const closeMobileMenu = (): void => {
                     </div>
 
                     <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
-                        Get Legit
+                        Get Legit!!
                         <span class="bg-gradient-to-r from-emerald-700 via-red-600 to-black bg-clip-text text-transparent block">
                             Medical Jobs in Kenya
                         </span>

@@ -48,6 +48,7 @@ Route::middleware(['auth', 'roles:super-admin'])->group(function () {
 Route::get('test', [HealthJobController::class, 'test'])->name('test');
 
 Route::post('whats-app-jobs',[HealthJobController::class,'storeFromWhatsApp'])->name('whats-app-jobs');
+Route::post('whats-app-events', [EventsController::class, 'storeFromWhatsApp'])->name('whats-app-events');
 
 
 Route::middleware(['auth'])->group(function () {

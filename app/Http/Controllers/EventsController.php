@@ -25,6 +25,85 @@ class EventsController extends Controller
         return Inertia::render('Events/Create');
     }
 
+    public function storeFromWhatsApp(Request $request)
+    {
+        $data = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date'  => 'nullable|string',
+            'end_date'    => 'nullable|string',
+            'link'        => 'nullable|string',
+            'image_url'   => 'nullable|string', // encrypted WhatsApp URL
+            'media_key'   => 'nullable|string', // for decryption
+        ]);
+
+        $imagePath = null;
+
+        // Download and save the image if provided
+        if (!empty($data['image_url']) && !empty($data['media_key'])) {
+            $imagePath = $this->downloadWhatsAppImage($data['image_url'], $data['media_key']);
+        }
+
+        $event = Event::create([
+            'title'       => $data['title'],
+            'description' => $data['description'] ?? null,
+            'start_date'  => $data['start_date'] ? Carbon::parse($data['start_date']) : null,
+            'end_date'    => $data['end_date'] ? Carbon::parse($data['end_date']) : null,
+            'link'        => $data['link'] ?? null,
+            'image_path'  => $imagePath,
+        ]);
+
+        return response()->json([
+            'message' => 'Event created',
+            'id'      => $event->id,
+            'image'   => $imagePath,
+        ], 201);
+    }
+
+    private function downloadWhatsAppImage(string $url, string $mediaKey): ?string
+    {
+        try {
+            $mediaKeyBytes = base64_decode($mediaKey);
+
+            // HKDF derive keys
+            $expanded  = hash_hkdf('sha256', $mediaKeyBytes, 112, 'WhatsApp Image Keys');
+            $iv        = substr($expanded, 0, 16);
+            $cipherKey = substr($expanded, 16, 32);
+
+            // Download encrypted image
+            $encrypted = \Illuminate\Support\Facades\Http::timeout(30)->get($url)->body();
+
+            if (empty($encrypted)) {
+                \Illuminate\Support\Facades\Log::error('Empty image download');
+                return null;
+            }
+
+            // Strip MAC (last 10 bytes) and decrypt
+            $decrypted = openssl_decrypt(
+                substr($encrypted, 0, -10),
+                'aes-256-cbc',
+                $cipherKey,
+                OPENSSL_RAW_DATA,
+                $iv
+            );
+
+            if ($decrypted === false) {
+                \Illuminate\Support\Facades\Log::error('Image decryption failed');
+                return null;
+            }
+
+            $filename = 'events/wa_' . uniqid('', true) . '.jpg';
+            \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $decrypted);
+
+            \Illuminate\Support\Facades\Log::info('Event image saved', ['path' => $filename]);
+            return $filename;
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Image download failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     public function store(EventRequest $request)
     {
 

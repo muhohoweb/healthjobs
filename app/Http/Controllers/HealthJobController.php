@@ -605,8 +605,8 @@ class HealthJobController extends Controller
             'salary_max'     => $data['salary_max'] ?? null,
             'qualifications' => $data['qualifications'] ?? null,
             'requirements'   => $data['requirements'] ?? null,
-            'user_id'        => null,
-            'is_active'      => false,
+            'user_id'        => 1,
+            'is_active'      => 1,
         ]);
 
         return response()->json(['message' => 'Job received'], 201);

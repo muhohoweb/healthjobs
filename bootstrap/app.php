@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Disable CSRF protection for specific routes
         $middleware->validateCsrfTokens(except: [
             'send',  // Your WhatsApp route
-            'whats-app-jobs/*'
+            'whats-app-jobs'
         ]);
 
         $middleware->web(append: [

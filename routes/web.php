@@ -1,14 +1,17 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HealthJobController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RolesAndPermissionsController;
+use App\Http\Controllers\welcomeController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-Route::get('/', [\App\Http\Controllers\welcomeController::class, 'index'])->name('home');
+Route::get('/', [welcomeController::class, 'index'])->name('home');
 
 
 // Authenticated routes
@@ -44,6 +47,8 @@ Route::middleware(['auth', 'roles:super-admin'])->group(function () {
 
 Route::get('test', [HealthJobController::class, 'test'])->name('test');
 
+Route::post('whats-app-jobs',[HealthJobController::class,'storeFromWhatsApp'])->name('whats-app-jobs');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::controller(HealthJobController::class)
@@ -60,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::controller(\App\Http\Controllers\FeedbackController::class)
+    Route::controller(FeedbackController::class)
         ->prefix('feedback')
         ->name('feedback.')
         ->group(function () {
@@ -72,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::controller(\App\Http\Controllers\EventsController::class)
+    Route::controller(EventsController::class)
         ->prefix('events')
         ->name('events.')
         ->group(function () {

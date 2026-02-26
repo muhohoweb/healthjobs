@@ -557,6 +557,7 @@ class HealthJobController extends Controller
 
     public function store(HealthJobRequest $request)
     {
+        Log::info(json_encode($request->all()));
         $healthJob = $request->validated();
 
         //        Facility::query()->where('');
@@ -575,6 +576,40 @@ class HealthJobController extends Controller
             'message' => 'Health job created successfully.',
             'data' => $healthJob,
         ], 201);
+    }
+
+    public function storeFromWhatsApp(Request $request)
+    {
+        $data = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'job_type'    => 'nullable|string',
+            'location'    => 'nullable|string',
+            'salary_min'  => 'nullable|numeric',
+            'salary_max'  => 'nullable|numeric',
+            'qualifications' => 'nullable|array',
+            'requirements'   => 'nullable|array',
+            'raw_text'    => 'nullable|string',
+        ]);
+
+        HealthJob::create([
+            'uuid'        => Str::uuid(),
+            'title'       => $data['title'],
+            'description' => $data['description'] ?? $data['raw_text'],
+            'job_type'    => in_array($data['job_type'] ?? '', ['full-time','part-time','contract'])
+                ? $data['job_type']
+                : 'full-time',
+            'location'       => $data['location'] ?? 'Kenya',
+            'cadre'          => 'General',
+            'salary_min'     => $data['salary_min'] ?? null,
+            'salary_max'     => $data['salary_max'] ?? null,
+            'qualifications' => $data['qualifications'] ?? null,
+            'requirements'   => $data['requirements'] ?? null,
+            'user_id'        => null,
+            'is_active'      => false,
+        ]);
+
+        return response()->json(['message' => 'Job received'], 201);
     }
 
 

@@ -287,47 +287,66 @@ const getPageUrl = (page: number) => {
                             </div>
                         </div>
 
-                        <!-- Footer Section -->
-                        <div class="mt-auto border-t border-gray-100 p-6 pt-4 lg:grid lg:grid-cols-1 lg:grid-cols-2 dark:border-gray-700">
-                            <div>
-                                <Link
-                                    :href="route('health-jobs.show', job.uuid)"
-                                    class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white"
-                                >
-                                    <span>View Details</span>
-                                    <svg
-                                        class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </Link>
-                            </div>
+                      <!-- Footer Section -->
+                      <div class="mt-auto border-t border-gray-100 p-6 pt-4 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-3">
+                          <Link
+                              :href="route('health-jobs.show', job.uuid)"
+                              class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-300 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white"
+                          >
+                            <span>View Details</span>
+                            <svg class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
 
-                            <!-- Small license warning badge for unlicensed users only -->
-                            <div v-if="job.user !== null && job.user.license_status !== 'active'" class="flex items-center justify-end">
-                                <span
-                                    class="inline-flex items-center rounded-full border border-amber-200 bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:border-amber-800/50 dark:bg-amber-900/30 dark:text-amber-300"
-                                >
-                                    <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                    User Unverified
-                                </span>
-                            </div>
-
-
+                          <div v-if="job.user !== null && job.user && job.user.license_status !== 'active'" class="flex items-center justify-end">
+            <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 dark:border-amber-800/50 dark:bg-amber-900/30 dark:text-amber-300">
+                <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                User Unverified
+            </span>
+                          </div>
                         </div>
 
-                        <div v-if="user.roles[0].name === 'super-admin'"  class="mt-auto border-t border-gray-100 p-6 pt-4 lg:grid lg:grid-cols-1 lg:grid-cols-2 dark:border-gray-700">
-                            <small>Posted By : {{job.user.email}}</small>
+                        <!-- New fields from WhatsApp pipeline -->
+                        <div class="space-y-1 text-xs text-gray-500 dark:text-gray-400">
+                          <div v-if="job.deadline" class="flex items-center gap-1">
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                            </svg>
+                            Deadline: {{ job.deadline }}
+                          </div>
+                          <div v-if="job.contact_phone" class="flex items-center gap-1">
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                            </svg>
+                            {{ job.contact_phone }}
+                          </div>
+                          <div v-if="job.contact_email" class="flex items-center gap-1">
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                            </svg>
+                            {{ job.contact_email }}
+                          </div>
+                          <div v-if="job.contract_duration" class="flex items-center gap-1">
+                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ job.contract_duration }}
+                          </div>
                         </div>
+
+                        <div v-if="user.roles[0].name === 'super-admin' && job.user" class="mt-3 border-t border-gray-100 pt-3 dark:border-gray-700">
+                          <small class="text-gray-500">Posted By: {{ job.user.email }}</small>
+                        </div>
+                      </div>
+
+                      <div v-if="user.roles[0].name === 'super-admin' && job.user"  class="mt-auto border-t border-gray-100 p-6 pt-4 lg:grid lg:grid-cols-1 lg:grid-cols-2 dark:border-gray-700">
+                        <small>Posted By : {{job.user.email}}</small>
+                      </div>
                     </div>
                 </div>
 

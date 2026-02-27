@@ -72,10 +72,14 @@ class HealthJob extends Model
         'description',
         'location',
         'job_type',
+        'contract_duration',   // add
         'salary_min',
         'salary_max',
         'experience_level',
         'requirements',
+        'qualifications',      // add
+        'responsibilities',    // add
+        'deadline',            // add
         'is_active',
         'user_id',
         'facility_id',
@@ -83,10 +87,12 @@ class HealthJob extends Model
     ];
 
     protected $casts = [
-        'requirements' => 'array',
-        'salary_min' => 'decimal:2',
-        'salary_max' => 'decimal:2',
-        'is_active' => 'boolean',
-        'qualifications' => 'array',
+        'requirements'     => 'array',
+        'qualifications'   => 'array',
+        'responsibilities' => 'array',   // add
+        'salary_min'       => 'decimal:2',
+        'salary_max'       => 'decimal:2',
+        'is_active'        => 'boolean',
+        'deadline'         => 'date',    // add
     ];
 }

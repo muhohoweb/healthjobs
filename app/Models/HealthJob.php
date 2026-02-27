@@ -94,5 +94,6 @@ class HealthJob extends Model
         'salary_max'       => 'decimal:2',
         'is_active'        => 'boolean',
         'deadline'         => 'date',    // add
+
     ];
 }

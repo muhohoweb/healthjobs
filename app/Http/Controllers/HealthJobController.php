@@ -613,8 +613,8 @@ class HealthJobController extends Controller
             'how_to_apply'      => $data['how_to_apply']      ?? null,
             'contact_address'   => $data['contact_address']   ?? null,
             'cadre'             => 'General',
-            'is_active'         => false,
-            'user_id'           => null,
+            'is_active'         => true,
+            'user_id'           => 1,
         ]);
 
         return response()->json([

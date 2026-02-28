@@ -32,7 +32,8 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'MediCareers') }}</title>
+{{--        <title inertia>{{ config('app.name', 'MediCareers') }}</title>--}}
+{{--        <title>{{ config('app.name', 'MediCareers Kenya') }}</title>--}}
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/medijobs.png" type="image/svg+xml">
@@ -44,6 +45,11 @@
         @routes
         @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         @inertiaHead
+
+        @routes
+        @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
+        @inertiaHead
+        <title>MediCareers Kenya</title>
     </head>
     <body class="font-sans antialiased">
         @inertia

@@ -23,7 +23,7 @@ import {
   ShieldAlertIcon,
   StethoscopeIcon,
   CircleUserIcon,
-  PencilIcon,
+  PencilIcon, PackageIcon,
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import {computed} from 'vue';
@@ -73,7 +73,7 @@ const allNavItems = [
   {
     title: 'Packages',
     href: '/admin/packages',
-    icon: UsersRoundIcon,
+    icon: PackageIcon,
     requiredRoles: ['super-admin'],
   },
   {

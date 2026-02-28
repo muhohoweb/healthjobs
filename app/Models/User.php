@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -148,5 +149,12 @@ class User extends Authenticatable
     public function mpesaPayments(): HasMany
     {
         return $this->hasMany(MpesaPayment::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model): void {
+            $model->account_number = 'MC-' . strtoupper(Str::random(8));
+        });
     }
 }

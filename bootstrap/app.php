@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloaadedAssets::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         // Register middleware aliases

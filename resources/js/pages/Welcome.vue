@@ -238,21 +238,7 @@ const closeMobileMenu = (): void => {
                         </a>
                     </div>
 
-                    <!-- Trust Badges -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 pt-4 max-w-lg mx-auto lg:max-w-none lg:mx-0">
-                        <div class="rounded-xl border border-gray-200 bg-white px-2 py-2 sm:px-3 sm:py-2 text-xs text-gray-600">
-                            License status: <span class="font-semibold text-emerald-700">Active</span>
-                        </div>
-                        <div class="rounded-xl border border-gray-200 bg-white px-2 py-2 sm:px-3 sm:py-2 text-xs text-gray-600">
-                            Facility: <span class="font-semibold">Vetted Employer</span>
-                        </div>
-                        <div class="rounded-xl border border-gray-200 bg-white px-2 py-2 sm:px-3 sm:py-2 text-xs text-gray-600">
-                            County coverage: <span class="font-semibold">47</span>
-                        </div>
-                        <div class="rounded-xl border border-gray-200 bg-white px-2 py-2 sm:px-3 sm:py-2 text-xs text-gray-600">
-                            Currency: <span class="font-semibold">KES</span>
-                        </div>
-                    </div>
+
                 </div>
 
                 <!-- Right Content - Hero Images -->

@@ -67,6 +67,7 @@ const closeMobileMenu = (): void => {
 </script>
 
 <template>
+  <Head title="MediCareers Kenya – Legit Medical Jobs" />
     <!-- Kenyan ribbon (subtle flag accent) -->
     <div class="fixed top-0 left-0 right-0 z-[60] h-1">
         <div class="h-full grid grid-cols-12">

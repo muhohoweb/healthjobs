@@ -1,5 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref,computed  } from 'vue';
+
+const props = defineProps<{
+  featuredJobs: Array<any>;
+  jobStats: any;
+}>();
+
+const currentIndex = ref(0);
+
+const visibleJobs = computed(() => {
+  return props.featuredJobs.slice(currentIndex.value, currentIndex.value + 3);
+});
+
+const canGoLeft = computed(() => currentIndex.value > 0);
+const canGoRight = computed(() => currentIndex.value + 3 < props.featuredJobs.length);
+
+const goLeft = () => { if (canGoLeft.value) currentIndex.value--; };
+const goRight = () => { if (canGoRight.value) currentIndex.value++; };
+
+const truncate = (text: string, max = 100): string => {
+  if (!text) return '';
+  const plain = text.replace(/<[^>]*>/g, '');
+  return plain.length <= max ? plain : plain.substring(0, max) + '...';
+};
 
 const mobileMenuOpen = ref(false);
 
@@ -415,170 +438,114 @@ const closeMobileMenu = (): void => {
                 </p>
             </div>
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
-                <!-- Sample Job 1 -->
-                <div
-                    class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/20"
-                >
-                    <div class="relative p-4 sm:p-6 pb-3 sm:pb-4">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex-1 pr-4">
-                                <h3 class="text-lg sm:text-xl font-bold leading-tight text-gray-900 group-hover:text-emerald-700 mb-2">
-                                    Registered Nurse – ICU
-                                </h3>
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <span class="text-xs sm:text-sm text-gray-500">[Sign up to view facility]</span>
-                                </div>
-                            </div>
-                            <span
-                                class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200/50"
-                            >
-                                Full-time
-                            </span>
-                        </div>
+          <!-- Carousel Navigation -->
+          <div class="flex items-center justify-between mb-6">
+            <button
+                @click="goLeft"
+                :disabled="!canGoLeft"
+                :class="[
+            'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200',
+            canGoLeft
+                ? 'border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                : 'border-gray-200 text-gray-300 cursor-not-allowed'
+        ]"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
 
-                        <div class="flex items-center space-x-3">
-                            <div class="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-50">
-                                <svg class="h-3 w-3 sm:h-4 sm:w-4 text-emerald-700" fill="currentColor" viewBox="0 0 20 20">
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-500">Nairobi</span>
-                        </div>
+            <span class="text-sm text-gray-500">
+        Showing {{ currentIndex + 1 }}–{{ Math.min(currentIndex + 3, featuredJobs.length) }} of {{ featuredJobs.length }} recent jobs
+    </span>
+
+            <button
+                @click="goRight"
+                :disabled="!canGoRight"
+                :class="[
+            'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200',
+            canGoRight
+                ? 'border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+                : 'border-gray-200 text-gray-300 cursor-not-allowed'
+        ]"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Job Cards -->
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
+            <div
+                v-for="job in visibleJobs"
+                :key="job.id"
+                class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/20"
+            >
+              <div class="relative p-4 sm:p-6 pb-3 sm:pb-4">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex-1 pr-4">
+                    <h3 class="text-lg sm:text-xl font-bold leading-tight text-gray-900 group-hover:text-emerald-700 mb-2">
+                      {{ job.title }}
+                    </h3>
+                    <div class="flex items-center space-x-2 mb-2 text-xs text-gray-500">
+                      <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                      </svg>
+                      <span>{{ job.location ?? 'Kenya' }}</span>
                     </div>
-
-                    <div class="flex-1 px-4 sm:px-6">
-                        <p class="text-xs sm:text-sm leading-relaxed text-gray-600">
-                            Join a high-acuity unit serving Nairobi county. Preferred: current BLS/ACLS and recent ICU experience.
-                        </p>
-
-                        <div class="mt-3 sm:mt-4 rounded-lg border border-emerald-100 bg-emerald-50/40 p-3 sm:p-4">
-                            <h4 class="mb-2 flex items-center text-xs sm:text-sm font-semibold text-emerald-800">
-                                <svg class="mr-2 h-3 w-3 sm:h-4 sm:w-4 text-emerald-700" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                                Key Requirements
-                            </h4>
-                            <ul class="space-y-1 sm:space-y-2">
-                                <li class="text-xs text-emerald-800">Active nursing license (verified)</li>
-                                <li class="text-xs text-emerald-800">2+ years ICU experience</li>
-                                <li class="text-xs font-medium text-emerald-700">Sign up to view all</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto border-t border-gray-50 p-4 sm:p-6 pt-3 sm:pt-4">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1">
-                                <div class="text-xs sm:text-sm font-semibold text-gray-600">KES •••• – ••••</div>
-                                <div class="text-xs text-gray-500">Senior Level</div>
-                            </div>
-                            <button
-                                @click="navigateToRegister"
-                                class="inline-flex items-center space-x-2 rounded-xl bg-emerald-600 px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg hover:bg-emerald-700"
-                            >
-                                <span>Unlock Details</span>
-                            </button>
-                        </div>
-                    </div>
+                  </div>
+                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200/50 capitalize">
+                    {{ job.job_type ?? 'Full-time' }}
+                </span>
                 </div>
 
-                <!-- Sample Job 2 -->
-                <div
-                    class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-red-500/20"
-                >
-                    <div class="relative p-4 sm:p-6 pb-3 sm:pb-4">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex-1 pr-4">
-                                <h3 class="text-lg sm:text-xl font-bold leading-tight text-gray-900 group-hover:text-red-700 mb-2">
-                                    Pediatrician
-                                </h3>
-                                <div class="text-xs sm:text-sm text-gray-500">Mombasa</div>
-                            </div>
-                            <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold text-red-700">
-                                Full-time
-                            </span>
-                        </div>
-                        <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
-                            Child-centred facility seeking compassionate specialist; supportive multi-disciplinary team.
-                        </p>
-                        <div class="rounded-lg border border-red-100 bg-red-50/40 p-3 sm:p-4">
-                            <h4 class="mb-2 text-xs sm:text-sm font-semibold text-red-800">Key Requirements</h4>
-                            <ul class="space-y-1 sm:space-y-2">
-                                <li class="text-xs text-red-800">Active medical license (verified)</li>
-                                <li class="text-xs text-red-800">Board certification preferred</li>
-                            </ul>
-                        </div>
-                    </div>
+                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  {{ truncate(job.description, 120) }}
+                </p>
+              </div>
 
-                    <div class="mt-auto border-t border-gray-50 p-4 sm:p-6 pt-3 sm:pt-4">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1">
-                                <div class="text-xs sm:text-sm font-semibold text-gray-600">KES •••• – ••••</div>
-                                <div class="text-xs text-gray-500">Expert Level</div>
-                            </div>
-                            <button
-                                @click="navigateToRegister"
-                                class="inline-flex items-center space-x-2 rounded-xl bg-red-600 px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg hover:bg-red-700"
-                            >
-                                <span>Unlock Details</span>
-                            </button>
-                        </div>
-                    </div>
+              <div class="flex-1 px-4 sm:px-6">
+                <div class="mt-3 sm:mt-4 rounded-lg border border-emerald-100 bg-emerald-50/40 p-3 sm:p-4">
+                  <h4 class="mb-2 text-xs sm:text-sm font-semibold text-emerald-800">Key Requirements</h4>
+                  <ul class="space-y-1">
+                    <li v-for="q in (job.qualifications ?? []).slice(0, 2)" :key="q" class="text-xs text-emerald-800">
+                      {{ q }}
+                    </li>
+                    <li class="text-xs font-medium text-emerald-700">Sign up to view all</li>
+                  </ul>
                 </div>
+              </div>
 
-                <!-- Sample Job 3 -->
-                <div
-                    class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/20 sm:col-span-2 lg:col-span-1"
-                >
-                    <div class="relative p-4 sm:p-6 pb-3 sm:pb-4">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex-1 pr-4">
-                                <h3 class="text-lg sm:text-xl font-bold leading-tight text-gray-900 group-hover:text-gray-900 mb-2">
-                                    Medical Laboratory Technologist
-                                </h3>
-                                <div class="text-xs sm:text-sm text-gray-500">Kisumu</div>
-                            </div>
-                            <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold text-gray-800">
-                                Contract
-                            </span>
-                        </div>
-                        <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
-                            State-of-the-art diagnostics with training on new platforms. Rotational shifts.
-                        </p>
-                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 sm:p-4">
-                            <h4 class="mb-2 text-xs sm:text-sm font-semibold text-gray-800">Key Requirements</h4>
-                            <ul class="space-y-1 sm:space-y-2">
-                                <li class="text-xs text-gray-800">Active license (verified)</li>
-                                <li class="text-xs text-gray-800">Keen on quality and safety</li>
-                            </ul>
-                        </div>
+              <div class="mt-auto border-t border-gray-50 p-4 sm:p-6 pt-3 sm:pt-4">
+                <div class="flex items-center justify-between">
+                  <div class="space-y-1">
+                    <div class="text-xs sm:text-sm font-semibold text-gray-600">
+                        <span v-if="job.salary_min && job.salary_max">
+                            KES {{ Number(job.salary_min).toLocaleString() }} – {{ Number(job.salary_max).toLocaleString() }}
+                        </span>
+                      <span v-else class="text-gray-400">KES ••••</span>
                     </div>
-
-                    <div class="mt-auto border-t border-gray-50 p-4 sm:p-6 pt-3 sm:pt-4">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1">
-                                <div class="text-xs sm:text-sm font-semibold text-gray-600">KES •••• – ••••</div>
-                                <div class="text-xs text-gray-500">Mid Level</div>
-                            </div>
-                            <button
-                                @click="navigateToRegister"
-                                class="inline-flex items-center space-x-2 rounded-xl bg-gray-900 px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg hover:bg-black"
-                            >
-                                <span>Unlock Details</span>
-                            </button>
-                        </div>
-                    </div>
+                    <div class="text-xs text-gray-500">Posted {{ job.created_at }}</div>
+                  </div>
+                  <button
+                      @click="navigateToRegister"
+                      class="inline-flex items-center space-x-2 rounded-xl bg-emerald-600 px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg hover:bg-emerald-700"
+                  >
+                    <span>Unlock Details</span>
+                  </button>
                 </div>
+              </div>
             </div>
+
+            <!-- Empty state -->
+            <div v-if="featuredJobs.length === 0" class="col-span-3 text-center py-16 text-gray-400">
+              <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+              <p class="text-sm">No new jobs in the last 5 days. Check back soon!</p>
+            </div>
+          </div>
 
             <!-- View All Jobs CTA -->
             <div class="text-center">

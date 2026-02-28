@@ -19,6 +19,11 @@ jobs:
           extensions: mbstring, xml, ctype, json, bcmath, pdo, mysql
           coverage: none
 
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          echo "APP_KEY=base64:placeholder==" >> .env
+
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
@@ -52,6 +57,7 @@ jobs:
             **/node_modules/**
             **/tests/**
             **/vendor/**
+            **/.env
 
       - name: Copy build files to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5

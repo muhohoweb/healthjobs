@@ -8,6 +8,16 @@ const props = defineProps<{
 
 const currentIndex = ref(0);
 
+const formatDeadline = (date: string): string => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('en-KE', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
 const visibleJobs = computed(() => {
   return props.featuredJobs.slice(currentIndex.value, currentIndex.value + 3);
 });

@@ -90,6 +90,13 @@ class HealthJob extends Model
         'cadre',
     ];
 
+    protected function deadline(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? \Carbon\Carbon::parse($value)->format('D, M d Y') : null,
+        );
+    }
+
     protected $casts = [
         'requirements'     => 'array',
         'qualifications'   => 'array',
@@ -97,6 +104,6 @@ class HealthJob extends Model
         'salary_min'       => 'decimal:2',
         'salary_max'       => 'decimal:2',
         'is_active'        => 'boolean',
-        'deadline'         => 'date',
+//        'deadline'         => 'date',
     ];
 }

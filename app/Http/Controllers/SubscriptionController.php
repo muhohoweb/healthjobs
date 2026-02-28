@@ -68,8 +68,9 @@ class SubscriptionController extends Controller
                 $phone,
                 $package->price,
                 $package->name,
-                'Subscription',
-                config('mpesa.callbacks.callback_url')  // add this
+                config('mpesa.callbacks.callback_url'),
+            'CustomerPayBillOnline',
+                '',
             );
 
             $result = json_decode($response, true);

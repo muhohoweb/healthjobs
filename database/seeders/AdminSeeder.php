@@ -13,6 +13,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
+        User::query()->where('email','=','superadmin@gmail.com')->delete();
         $user =  User::query()->create([
             'name' => 'Administrator',
             'email'=>'superadmin@gmail.com',

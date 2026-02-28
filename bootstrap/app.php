@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureProfileComplete;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 
@@ -38,8 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'roles' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
-            'complete-profile' => \App\Http\Middleware\EnsureProfileComplete::class,
+            'complete-profile' => EnsureProfileComplete::class,
         ]);
+        $middleware->redirectUsersTo('/health-jobs');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

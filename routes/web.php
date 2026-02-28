@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\FacilityController;
@@ -13,10 +14,13 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::get('/', [welcomeController::class, 'index'])->name('home');
 
-
-// Authenticated routes
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Authenticated routes
+Route::middleware(['auth', 'roles:super-admin'])->group(function () {
+    Route::resource('admin/packages', PackageController::class)->names('admin.packages');
 });
 
 Route::middleware(['auth'])->group(function () {

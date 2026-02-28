@@ -4,30 +4,24 @@ export const useAuth = () => {
     const page = usePage()
     const user = page.props.auth.user
 
-    // Check if user has a specific roles
     const hasRole = (role:string) => {
         if (!user?.roles || !Array.isArray(user.roles)) return false
-
         return user.roles.some(r =>
             (typeof r === 'string' && r === role) ||
             (typeof r === 'object' && r.name === role)
         )
     }
 
-    // Check if user has a specific permission
     const hasPermission = (permission:string) => {
         if (!user?.permissions || !Array.isArray(user.permissions)) return false
-
         return user.permissions.some(p =>
             (typeof p === 'string' && p === permission) ||
             (typeof p === 'object' && p.name === permission)
         )
     }
 
-    // Check if user has ANY of the given roles
     const hasAnyRole = (roles:string) => {
         if (!user?.roles || !Array.isArray(user.roles)) return false
-
         return roles.some(role =>
             user.roles.some(r =>
                 (typeof r === 'string' && r === role) ||
@@ -36,10 +30,8 @@ export const useAuth = () => {
         )
     }
 
-    // Check if user has ALL of the given roles
     const hasAllRoles = (roles) => {
         if (!user?.roles || !Array.isArray(user.roles)) return false
-
         return roles.every(role =>
             user.roles.some(r =>
                 (typeof r === 'string' && r === role) ||
@@ -48,10 +40,8 @@ export const useAuth = () => {
         )
     }
 
-    // Check if user has ANY of the given permissions
     const hasAnyPermission = (permissions:string) => {
         if (!user?.permissions || !Array.isArray(user.permissions)) return false
-
         return permissions.some(permission =>
             user.permissions.some(p =>
                 (typeof p === 'string' && p === permission) ||
@@ -60,10 +50,8 @@ export const useAuth = () => {
         )
     }
 
-    // Check if user has ALL of the given permissions
     const hasAllPermissions = (permissions:string) => {
         if (!user?.permissions || !Array.isArray(user.permissions)) return false
-
         return permissions.every(permission =>
             user.permissions.some(p =>
                 (typeof p === 'string' && p === permission) ||
@@ -72,7 +60,6 @@ export const useAuth = () => {
         )
     }
 
-    // Main function to check access based on your requirements format
     const canAccess = (requirements = {}) => {
         const {
             requiredRoles = [],
@@ -84,40 +71,46 @@ export const useAuth = () => {
         let hasRequiredRoles = true
         let hasRequiredPermissions = true
 
-        // Check roles
         if (requiredRoles.length > 0) {
-            if (requireAnyRole) {
-                hasRequiredRoles = hasAnyRole(requiredRoles)
-            } else {
-                hasRequiredRoles = hasAllRoles(requiredRoles)
-            }
+            hasRequiredRoles = requireAnyRole ? hasAnyRole(requiredRoles) : hasAllRoles(requiredRoles)
         }
 
-        // Check permissions
         if (requiredPermissions.length > 0) {
-            if (requireAnyPermission) {
-                hasRequiredPermissions = hasAnyPermission(requiredPermissions)
-            } else {
-                hasRequiredPermissions = hasAllPermissions(requiredPermissions)
-            }
+            hasRequiredPermissions = requireAnyPermission ? hasAnyPermission(requiredPermissions) : hasAllPermissions(requiredPermissions)
         }
 
         return hasRequiredRoles && hasRequiredPermissions
     }
 
-    return {
-        // User data
-        ...user,
+    // ─── Subscription helpers ────────────────────────────────────
+    const hasActiveSubscription = (): boolean => {
+        return user?.hasActiveSubscription ?? false
+    }
 
-        // Individual check methods
+    const activeSubscription = () => {
+        return user?.activeSubscription ?? null
+    }
+
+    const daysUntilExpiry = (): number | null => {
+        const expiry = user?.activeSubscription?.expires_at
+        if (!expiry) return null
+        const diff = new Date(expiry).getTime() - new Date().getTime()
+        return Math.ceil(diff / (1000 * 60 * 60 * 24))
+    }
+
+    return {
+        ...user,
         hasRole,
         hasPermission,
         hasAnyRole,
         hasAllRoles,
         hasAnyPermission,
         hasAllPermissions,
+        canAccess,
 
-        // Main access check method
-        canAccess
+        // Subscription
+        hasActiveSubscription,
+        activeSubscription,
+        daysUntilExpiry,
     }
 }

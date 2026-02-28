@@ -54,6 +54,8 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions(['id', 'name']),
                     'isProfileComplete' => $request->user()->isProfileComplete(),
                     'jobInterests' => $request->user()->jobInterests,
+                    'hasActiveSubscription' => $request->user()->hasActiveSubscription(),
+                    'activeSubscription'  => $request->user()->activeSubscription()->with('package')->first(),
                 ] : null,
             ],
             'ziggy' => [

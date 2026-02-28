@@ -26,7 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'send',  // Your WhatsApp route
             'whats-app-jobs',
-            'whats-app-events'
+            'whats-app-events',
+            'mpesa/*',
         ]);
 
         $middleware->web(append: [
@@ -40,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'roles' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'complete-profile' => EnsureProfileComplete::class,
+            'active-subscription' => \App\Http\Middleware\CheckActiveSubscription::class, // add this
         ]);
         $middleware->redirectUsersTo('/health-jobs');
     })

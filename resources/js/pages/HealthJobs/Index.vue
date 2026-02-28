@@ -106,12 +106,41 @@ const getPageUrl = (page: number) => {
     url.searchParams.set('page', page.toString());
     return url.toString();
 };
+import { computed } from 'vue';
+
+// const user = useAuth();
+
+const daysUntilExpiry = computed(() => {
+  const expiry = user.activeSubscription()?.expires_at;
+  if (!expiry) return null;
+  const diff = new Date(expiry).getTime() - new Date().getTime();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+});
 </script>
 
 <template>
     <Head title="Health Job" />
 
     <AppLayout>
+      <!-- Subscription expiry warning -->
+      <div v-if="user.activeSubscription() && user.activeSubscription().expires_at"
+           class="mb-4 rounded-md p-4"
+           :class="daysUntilExpiry <= 3
+         ? 'bg-red-50 border border-red-200 text-red-800 dark:bg-red-900/20 dark:text-red-300'
+         : 'bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300'"
+      >
+        <div class="flex items-center justify-between">
+        <span class="text-sm font-medium">
+            {{ daysUntilExpiry <= 0
+            ? '⚠️ Your subscription has expired.'
+            : `⏳ Your subscription expires in ${daysUntilExpiry} day(s).` }}
+        </span>
+          <Link :href="route('subscriptions.index')" class="text-xs underline font-semibold">
+            Renew Now
+          </Link>
+        </div>
+      </div>
+
         <div class="min-h-screen bg-gray-50 py-8 dark:bg-gray-900">
             <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
 

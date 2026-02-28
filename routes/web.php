@@ -6,8 +6,10 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HealthJobController;
+use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RolesAndPermissionsController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\welcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +18,21 @@ Route::get('/', [welcomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Subscriptions
+Route::middleware(['auth'])->group(function () {
+    Route::get('subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::post('subscriptions', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+    Route::patch('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+});
+
+// M-Pesa callback — no auth, no CSRF
+Route::post('mpesa/callback', [MpesaController::class, 'callback'])->name('mpesa.callback');
+
+// Admin payments
+Route::middleware(['auth', 'roles:super-admin'])->group(function () {
+    Route::get('admin/payments', [MpesaController::class, 'index'])->name('admin.payments.index');
 });
 
 // Authenticated routes
@@ -55,7 +72,7 @@ Route::post('whats-app-jobs',[HealthJobController::class,'storeFromWhatsApp'])->
 Route::post('whats-app-events', [EventsController::class, 'storeFromWhatsApp'])->name('whats-app-events');
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','active-subscription'])->group(function () {
     Route::controller(HealthJobController::class)
         ->prefix('health-jobs')
         ->name('health-jobs.')

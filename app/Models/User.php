@@ -37,7 +37,8 @@ class User extends Authenticatable
         'description',
         'profession',
         'email_verified_at',
-        'avatar'
+        'avatar',
+        'account_number'
     ];
 
     /**

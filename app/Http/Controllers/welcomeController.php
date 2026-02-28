@@ -32,7 +32,7 @@ class welcomeController extends Controller
                         'salary_max'     => $job->salary_max,
                         'experience_level' => $job->experience_level,
                         'qualifications' => $job->qualifications ?? [],
-                        'deadline'       => $job->deadline?->format('M d, Y'),
+                        'deadline'       => $job->deadline,
                         'created_at'     => $job->created_at->format('M d, Y'),
                     ];
                 });
